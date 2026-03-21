@@ -4,14 +4,6 @@ Controle Qualite Industriel (Computer Vision)
 Dataset : Casting Product (Kaggle) -- Pieces moulees OK vs Defaut
 """
 
-# =============================================================================
-# CELLULE 1 : INSTALLATION DES DEPENDANCES
-# =============================================================================
-# !pip install -q torch torchvision albumentations scikit-learn seaborn kagglehub
-
-# =============================================================================
-# CELLULE 2 : IMPORTS
-# =============================================================================
 import os
 import random
 import warnings
@@ -50,9 +42,6 @@ torch.manual_seed(SEED)
 print(f"[OK] Device : {DEVICE}")
 print(f"[OK] PyTorch {torch.__version__}")
 
-# =============================================================================
-# CELLULE 3 : TELECHARGEMENT DU DATASET
-# =============================================================================
 import kagglehub
 
 print("Telechargement du dataset Casting Product depuis Kaggle...")
@@ -74,11 +63,6 @@ for root, dirs, files in os.walk(dataset_path):
         indent = " " * 2 * level
         print(f"{indent}{os.path.basename(root)}/  ({len(files)} fichiers)")
 
-# =============================================================================
-# CELLULE 4 : CHARGEMENT ET EXPLORATION DES DONNEES
-# =============================================================================
-
-def find_image_dirs(base_path: str) -> dict:
     """Localise les dossiers ok_front et def_front dans le dataset."""
     base = Path(base_path)
     result = {"ok": None, "defect": None}
@@ -149,12 +133,6 @@ plt.suptitle("Exemples du dataset Casting Product", fontsize=14)
 plt.tight_layout()
 plt.show()
 
-# =============================================================================
-# CELLULE 5 : PREPROCESSING (CLAHE + RESIZE)
-# =============================================================================
-
-TARGET_SIZE = 224  # ResNet attend 224x224
-
 
 def preprocess_image(image: np.ndarray, apply_clahe: bool = True) -> np.ndarray:
     """Pretraitement adapte aux images industrielles.
@@ -194,11 +172,6 @@ if defect_images:
 
 print("[OK] Preprocessing defini.")
 
-# =============================================================================
-# CELLULE 6 : SPLIT TRAIN/VAL ET DATASET PYTORCH
-# =============================================================================
-
-def split_dataset(ok_paths: list, defect_paths: list, val_ratio: float = 0.2):
     """Split les donnees en train/val en preservant la distribution des classes."""
     random.shuffle(ok_paths)
     random.shuffle(defect_paths)
@@ -276,11 +249,6 @@ print(f"\nBatch shape : {batch_imgs.shape}")
 print(f"Labels      : {batch_labels[:10].tolist()}")
 print("[OK] DataLoaders prets.")
 
-# =============================================================================
-# CELLULE 7 : MODELE RESNET-18 (TRANSFER LEARNING)
-# =============================================================================
-
-class DefectClassifier(nn.Module):
     """ResNet-18 avec tete de classification custom pour OK/Defaut."""
 
     def __init__(self, num_classes=2, pretrained=True):
@@ -338,11 +306,6 @@ print(f"  Poids de classe : OK={weight_ok:.3f}, Defect={weight_def:.3f}")
 
 criterion = nn.CrossEntropyLoss(weight=class_weights)
 
-# =============================================================================
-# CELLULE 8 : FONCTIONS D'ENTRAINEMENT ET D'EVALUATION
-# =============================================================================
-
-def train_one_epoch(model, loader, criterion, optimizer):
     """Entraine le modele sur une epoch."""
     model.train()
     running_loss = 0.0
@@ -394,11 +357,6 @@ def evaluate(model, loader, criterion):
 
 print("[OK] Fonctions d'entrainement pretes.")
 
-# =============================================================================
-# CELLULE 9 : ENTRAINEMENT EN 2 PHASES
-# =============================================================================
-
-NUM_EPOCHS = 15  # Ajuster selon le temps disponible (15 = rapide, 30 = meilleur)
 best_recall = 0.0
 history = {"train_loss": [], "val_loss": [], "train_recall": [], "val_recall": [], "val_f2": []}
 
@@ -464,11 +422,6 @@ print(f"\nMeilleur rappel en validation : {best_recall:.4f}")
 model.load_state_dict(torch.load("best_model.pt", map_location=DEVICE, weights_only=True))
 model.eval()
 
-# =============================================================================
-# CELLULE 10 : EVALUATION FINALE
-# =============================================================================
-
-val_loss, val_recall, val_f2, val_probs, val_labels_arr, val_preds = evaluate(
     model, val_loader, criterion
 )
 
@@ -499,12 +452,6 @@ for t in np.arange(0.05, 0.95, 0.01):
 
 print(f"\nSeuil optimal (rappel >= 95%) : {best_threshold:.2f}")
 print(f"  Precision a ce seuil : {best_prec_at_recall:.4f}")
-
-# =============================================================================
-# CELLULE 11 : VISUALISATIONS
-# =============================================================================
-
-fig, axes = plt.subplots(2, 3, figsize=(18, 10))
 
 # Courbes d'entrainement - Loss
 axes[0, 0].plot(history["train_loss"], label="Train", color="steelblue")
@@ -559,11 +506,6 @@ plt.suptitle("Evaluation du modele -- Controle Qualite", fontsize=14)
 plt.tight_layout()
 plt.show()
 
-# =============================================================================
-# CELLULE 12 : GRAD-CAM (EXPLICABILITE)
-# =============================================================================
-
-class GradCAM:
     """Grad-CAM : visualise les zones d'attention du CNN."""
 
     def __init__(self, model, target_layer=None):
@@ -650,11 +592,6 @@ plt.show()
 
 print("[OK] Grad-CAM genere.")
 
-# =============================================================================
-# CELLULE 13 : PREDICTIONS SUR DES EXEMPLES INDIVIDUELS
-# =============================================================================
-
-def predict_single_image(model, image_path: str, threshold: float = 0.5):
     """Prediction sur une image individuelle."""
     img = cv2.imread(image_path)
     processed = preprocess_image(img)
