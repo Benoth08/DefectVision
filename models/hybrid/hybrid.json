@@ -1,0 +1,17 @@
+{
+  "strategy": "stacking",
+  "ae_center": 0.6391854286193848,
+  "ae_scale": 0.18638159334659576,
+  "supervised_threshold": 0.4081338047981262,
+  "autoencoder_threshold": 0.691693902015686,
+  "threshold": 0.2573144937627692,
+  "coef_supervised": 1.5156282650049513,
+  "coef_autoencoder": 0.3129050338750619,
+  "intercept": -0.9235737935681707,
+  "review_margin": 0.1,
+  "novelty_threshold": 1.150442123413086,
+  "extra": {
+    "cv_folds": 5,
+    "C": 1.0
+  }
+}

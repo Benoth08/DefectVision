@@ -1,0 +1,5 @@
+# PyTorch en version CPU (images Docker). Sur une machine GPU, installer la
+# version CUDA correspondante a la place.
+--index-url https://download.pytorch.org/whl/cpu
+torch==2.8.0
+torchvision==0.23.0

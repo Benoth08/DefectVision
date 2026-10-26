@@ -1,0 +1,95 @@
+{
+  "hash": {
+    "type": "dHash",
+    "bits": 256,
+    "symmetries": 8
+  },
+  "near_duplicate_max_hamming": 12,
+  "verified_link": {
+    "max_hamming": 20,
+    "min_detail_correlation": 0.5
+  },
+  "counts": {
+    "augmented_300": {
+      "OK": 3137,
+      "DEFAUT": 4211
+    },
+    "originals_512": {
+      "OK": 519,
+      "DEFAUT": 781
+    }
+  },
+  "originals": {
+    "images": 1300,
+    "links": {
+      "sure": 282,
+      "candidates": 975,
+      "verified": 63
+    },
+    "groups": 1039,
+    "groups_with_several_images": 119,
+    "images_in_shared_groups": 380,
+    "largest_group": 25,
+    "group_sizes": {
+      "1": 920,
+      "2": 77,
+      "3": 14,
+      "4": 11,
+      "5": 5,
+      "6": 4,
+      "7": 3,
+      "8": 1,
+      "9": 1,
+      "13": 1,
+      "15": 1,
+      "25": 1
+    },
+    "groups_with_conflicting_labels": 0,
+    "exact_duplicates": 0,
+    "nearest_neighbor_hamming": {
+      "p0": 1.0,
+      "p1": 4.0,
+      "p5": 7.0,
+      "p25": 13.0,
+      "p50": 20.0,
+      "p75": 27.0,
+      "p95": 36.0,
+      "p100": 48.0
+    }
+  },
+  "augmented": {
+    "images": 7348,
+    "matched_to_an_original": 8,
+    "matched_ratio": 0.0010887316276537834,
+    "distance_to_nearest_original": {
+      "p0": 7.0,
+      "p1": 20.0,
+      "p5": 27.0,
+      "p25": 36.0,
+      "p50": 41.0,
+      "p75": 45.0,
+      "p95": 54.0,
+      "p100": 68.0
+    },
+    "kaggle_split": {
+      "train_images": 6633,
+      "test_images": 715,
+      "test_with_twin_in_train": 64,
+      "test_with_twin_in_train_ratio": 0.08951048951048951,
+      "test_within_4_bits_of_train": 73,
+      "test_within_4_bits_of_train_ratio": 0.1020979020979021,
+      "test_with_near_duplicate_in_train": 241,
+      "test_with_near_duplicate_in_train_ratio": 0.33706293706293705,
+      "distance_test_to_nearest_train": {
+        "p0": 0.0,
+        "p1": 0.0,
+        "p5": 0.0,
+        "p25": 10.5,
+        "p50": 15.0,
+        "p75": 21.0,
+        "p95": 28.0,
+        "p100": 54.0
+      }
+    }
+  }
+}

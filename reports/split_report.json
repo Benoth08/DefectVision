@@ -1,0 +1,54 @@
+{
+  "unit": "groupe de quasi-doublons",
+  "salt": "defectvision-v1",
+  "ratios": {
+    "val": 0.15,
+    "blind_test": 0.15
+  },
+  "excluded": {
+    "conflicting_label_groups": 0,
+    "exact_duplicates": 0
+  },
+  "splits": {
+    "train": {
+      "images": 908,
+      "groups": 738,
+      "OK": 361,
+      "DEFAUT": 547,
+      "defect_ratio": 0.6024229074889867,
+      "sampler_share": {
+        "OK": 0.4999999691630041,
+        "DEFAUT": 0.5000000308369958
+      },
+      "sha256": "5af629c47a3a9838e1494041f1011a6ea26419393eb2776ca8d312306543ecc4"
+    },
+    "val": {
+      "images": 197,
+      "groups": 151,
+      "OK": 80,
+      "DEFAUT": 117,
+      "defect_ratio": 0.5939086294416244,
+      "sha256": "5ffa82ad93f429102a245ce439eaa36c3961551c62f8e83046e7e43aeb6fd443"
+    },
+    "blind_test": {
+      "images": 195,
+      "groups": 150,
+      "OK": 78,
+      "DEFAUT": 117,
+      "defect_ratio": 0.6,
+      "sha256": "8a826d3f4eadb33ebf1d8357b0600a54b56be4bb2a978ac3d721b9da71432720"
+    }
+  },
+  "checks": {
+    "shared_groups": {
+      "train/val": 0,
+      "train/blind_test": 0,
+      "val/blind_test": 0
+    },
+    "shared_files": {
+      "train/val": 0,
+      "train/blind_test": 0,
+      "val/blind_test": 0
+    }
+  }
+}

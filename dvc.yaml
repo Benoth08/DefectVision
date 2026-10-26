@@ -1,0 +1,168 @@
+# Pipeline DefectVision : dvc repro relance seulement ce qui a change.
+#
+#   acquire -> index -> split -> train_supervised --+
+#                             -> train_autoencoder -+-> fit_hybrid -> evaluate
+#
+# Les sorties lourdes (images, modeles) vont dans le cache DVC ; les metriques,
+# historiques et figures (cache: false) sont versionnes par git.
+
+stages:
+  acquire:
+    cmd: python -m defectvision.data.acquire
+    deps:
+      - src/defectvision/data/acquire.py
+    params:
+      - data.download_url
+      - data.archive_sha256
+    outs:
+      - data/raw/casting
+    metrics:
+      - reports/acquire.json:
+          cache: false
+
+  index:
+    cmd: python -m defectvision.data.build_index
+    deps:
+      - src/defectvision/data/build_index.py
+      - src/defectvision/data/hashing.py
+      - data/raw/casting
+    params:
+      - data.hash_size
+      - data.near_duplicate_max_hamming
+      - data.verified_link_max_hamming
+      - data.verified_link_min_detail_correlation
+    outs:
+      - data/interim/index.csv
+    metrics:
+      - reports/data_audit.json:
+          cache: false
+
+  split:
+    cmd: python -m defectvision.data.split
+    deps:
+      - src/defectvision/data/split.py
+      - data/interim/index.csv
+    params:
+      - split
+    outs:
+      - data/splits/train.csv
+      - data/splits/val.csv
+      - data/splits/blind_test.csv
+    metrics:
+      - reports/split_report.json:
+          cache: false
+
+  train_supervised:
+    cmd: python -m defectvision.training.train_supervised
+    deps:
+      - src/defectvision/training/train_supervised.py
+      - src/defectvision/training/common.py
+      - src/defectvision/models/classifier.py
+      - src/defectvision/data/datasets.py
+      - src/defectvision/data/tensors.py
+      - src/defectvision/data/augment.py
+      - src/defectvision/data/preprocessing.py
+      - src/defectvision/evaluation/metrics.py
+      - data/splits/train.csv
+      - data/splits/val.csv
+      - data/raw/casting
+    params:
+      - seed
+      - supervised
+      - preprocessing
+      - augmentation
+      - evaluation.target_recall
+      - evaluation.recall_confidence
+      - runtime.device
+    outs:
+      - models/supervised
+    metrics:
+      - reports/metrics/supervised_val.json:
+          cache: false
+    plots:
+      - reports/plots/supervised_history.csv:
+          cache: false
+          x: epoch
+
+  train_autoencoder:
+    cmd: python -m defectvision.training.train_autoencoder
+    deps:
+      - src/defectvision/training/train_autoencoder.py
+      - src/defectvision/training/common.py
+      - src/defectvision/models/autoencoder.py
+      - src/defectvision/data/datasets.py
+      - src/defectvision/data/tensors.py
+      - src/defectvision/data/augment.py
+      - src/defectvision/data/preprocessing.py
+      - src/defectvision/inference/scoring.py
+      - src/defectvision/evaluation/metrics.py
+      - data/splits/train.csv
+      - data/splits/val.csv
+      - data/raw/casting
+    params:
+      - seed
+      - autoencoder
+      - preprocessing
+      - augmentation
+      - evaluation.target_recall
+      - evaluation.recall_confidence
+      - runtime.device
+    outs:
+      - models/autoencoder
+    metrics:
+      - reports/metrics/autoencoder_val.json:
+          cache: false
+    plots:
+      - reports/plots/autoencoder_history.csv:
+          cache: false
+          x: epoch
+
+  fit_hybrid:
+    cmd: python -m defectvision.training.fit_hybrid
+    deps:
+      - src/defectvision/training/fit_hybrid.py
+      - src/defectvision/models/hybrid.py
+      - src/defectvision/inference/scoring.py
+      - data/splits/val.csv
+      - models/supervised
+      - models/autoencoder
+    params:
+      - seed
+      - hybrid
+      - evaluation.target_recall
+      - evaluation.recall_confidence
+    outs:
+      - models/hybrid
+    metrics:
+      - reports/metrics/hybrid_val.json:
+          cache: false
+
+  evaluate:
+    cmd: python -m defectvision.evaluation.evaluate
+    deps:
+      - src/defectvision/evaluation
+      - src/defectvision/inference
+      - src/defectvision/explain
+      - data/splits/blind_test.csv
+      - data/splits/train.csv
+      - models/supervised
+      - models/autoencoder
+      - models/hybrid
+      - reports/plots/supervised_history.csv
+      - reports/plots/autoencoder_history.csv
+      - reports/metrics/hybrid_val.json
+      - reports/split_report.json
+    params:
+      - seed
+      - evaluation
+      - gates
+      - preprocessing
+    outs:
+      - models/manifest.json
+      - reports/predictions/blind_test.csv:
+          cache: false
+      - reports/figures:
+          cache: false
+    metrics:
+      - reports/metrics/blind_test.json:
+          cache: false

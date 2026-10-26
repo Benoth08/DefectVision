@@ -1,0 +1,113 @@
+# Parametres du pipeline DefectVision.
+# Chaque etape de dvc.yaml declare les cles qu'elle lit : modifier une valeur
+# ne relance que les etapes concernees (dvc repro).
+
+seed: 42
+
+data:
+  # Telechargement public Kaggle (aucun compte necessaire).
+  download_url: https://www.kaggle.com/api/v1/datasets/download/ravirajsinh45/real-life-industrial-dataset-of-casting-product
+  # Empreinte attendue de l'archive ("" = pas de verification), relevee le 2026-10-23.
+  archive_sha256: a11236976a65d77edd41fa3f8a2803a583157bd7401efc5e7ef5532cf3a00437
+  # Hachage perceptuel (dHash 16x16 = 256 bits, 8 symetries) pour reperer
+  # plusieurs photos d'une meme piece.
+  hash_size: 16
+  # Lien sur : distance de Hamming <= 12 bits (doublon visuel net).
+  near_duplicate_max_hamming: 12
+  # Lien verifie : distance <= 20 bits ET correlation du detail fin >= 0,5.
+  verified_link_max_hamming: 20
+  verified_link_min_detail_correlation: 0.5
+
+split:
+  # Decoupage par groupes de quasi-doublons, stratifie par classe.
+  val_ratio: 0.15
+  blind_test_ratio: 0.15
+  # Le blind test ne depend que de ce sel et de son ratio : il reste fige
+  # meme si les autres parametres changent.
+  salt: defectvision-v1
+
+preprocessing:
+  clahe: true
+  clahe_clip_limit: 2.0
+  clahe_tile_grid: 8
+
+augmentation:
+  hflip_p: 0.5
+  vflip_p: 0.5
+  rotate_limit: 15
+  rotate_p: 0.5
+  brightness_contrast_limit: 0.2
+  brightness_contrast_p: 0.5
+  noise_std: 0.03
+  noise_p: 0.3
+  blur_p: 0.2
+
+supervised:
+  image_size: 224
+  pretrained: true
+  batch_size: 32
+  epochs_phase1: 5
+  epochs_phase2: 10
+  lr_phase1: 0.001
+  lr_phase2: 0.00001
+  unfreeze_layers: 2
+  # sampler : lots equilibres 50/50 (tirage pondere) ;
+  # class_weight : perte ponderee ; none : aucune correction.
+  balancing: sampler
+  patience: 6
+
+autoencoder:
+  # feature : autoencodeur sur les caracteristiques ResNet-18 (gelees) ;
+  # conv : autoencodeur convolutif sur les pixels.
+  architecture: feature
+  pretrained: true
+  # 320 px et sans CLAHE : retenus sur la validation (docs/DECISIONS.md, M3).
+  image_size: 320
+  preprocessing:
+    clahe: false
+  batch_size: 16
+  epochs: 200
+  lr: 0.001
+  weight_decay: 0.00001
+  # none | geometric (symetries, rotation) | full (comme le supervise)
+  augment: geometric
+  latent_channels: 32
+  hidden_channels: 192
+  # Poids du terme SSIM dans la perte du modele conv.
+  ssim_weight: 0.5
+  # Score d'image : max ou moyenne des k % pixels les plus anormaux.
+  score_reduction: max
+  score_topk_ratio: 0.01
+  score_blur_sigma: 4.0
+  patience: 25
+
+hybrid:
+  # stacking : regression logistique sur les deux scores ;
+  # or : defaut si l'une des deux branches depasse son seuil.
+  strategy: stacking
+  C: 1.0
+  cv_folds: 5
+  # Zone autour du seuil ou la decision est renvoyee a l'operateur.
+  review_margin: 0.1
+  # Seuil de nouveaute : centile des scores d'anomalie des pieces saines (validation).
+  # Une anomalie au-dessus, non vue par le supervise, part aussi en revue.
+  novelty_quantile: 0.99
+
+evaluation:
+  # Rappel (POD) minimal vise lors du choix des seuils sur la validation...
+  target_recall: 0.95
+  # ... demontre avec ce niveau de confiance (borne inferieure de Clopper-Pearson) :
+  # critere "POD 95/95" du controle non destructif. Supprimer la ligne pour viser
+  # seulement le rappel observe.
+  recall_confidence: 0.95
+  bootstrap_samples: 2000
+  ci_level: 0.95
+
+gates:
+  # Conditions de promotion du modele hybride (mesurees sur le blind test).
+  min_recall: 0.95
+  min_precision: 0.80
+
+runtime:
+  device: auto
+  num_workers: 4

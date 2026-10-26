@@ -1,0 +1,5 @@
+# Socle commun a toutes les images (pretraitement, chargement des modeles).
+# Versions epinglees : celles de la campagne d'entrainement du 2026-10-23 (tests verts).
+numpy==2.5.2
+opencv-python-headless==4.14.0.94
+PyYAML>=6.0.2,<7

@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "defectvision"
+version = "1.0.0"
+description = "Controle qualite visuel de pieces moulees : ResNet-18 supervise, autoencodeur non supervise et modele hybride"
+readme = "README.md"
+requires-python = ">=3.11"
+# Les dependances sont epinglees dans requirements/*.txt (une liste par image Docker).
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::UserWarning",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+src = ["src", "tests", "airflow/dags"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["B008"]

@@ -1,0 +1,71 @@
+{
+  "version": "dv-fa184132dba5",
+  "created_at": "2026-10-23T22:07:59+00:00",
+  "files": {
+    "autoencoder/meta.json": "d13fb4b05a2a88a7f6d62ba122394ad7b0f8b084dcaa6586d545532dd6e47607",
+    "autoencoder/model.pt": "09de9deb90e2b6db43f6b4f090cecd1979ddf918ce3bfbc3b206f0a5dc1f5656",
+    "hybrid/hybrid.json": "c8fec3d86c89ee91a3c2c71a34f728e44be0795cd7fda7aa2f65226fb3fcf559",
+    "supervised/meta.json": "4145eec567f3692a31d6bfa9f50c9e275c37a953136b7fcb8b3fe92e44504427",
+    "supervised/model.pt": "39a207138dffaa003a343b084ddacdb12c5c4240d782fdb8ceffed6e09e40f2c"
+  },
+  "metrics": {
+    "blind_test": {
+      "supervised": {
+        "recall": 0.9572649572649573,
+        "precision": 0.9911504424778761,
+        "f2": 0.963855421686747,
+        "false_alarm_rate": 0.01282051282051282,
+        "balanced_accuracy": 0.9722222222222223,
+        "roc_auc": 0.9982467674775367,
+        "average_precision": 0.9988055325806435
+      },
+      "autoencoder": {
+        "recall": 0.9572649572649573,
+        "precision": 0.7887323943661971,
+        "f2": 0.9180327868852459,
+        "false_alarm_rate": 0.38461538461538464,
+        "balanced_accuracy": 0.7863247863247864,
+        "roc_auc": 0.9417050186280956,
+        "average_precision": 0.9664151273091334
+      },
+      "hybrid": {
+        "recall": 0.9743589743589743,
+        "precision": 0.991304347826087,
+        "f2": 0.9777015437392796,
+        "false_alarm_rate": 0.01282051282051282,
+        "balanced_accuracy": 0.9807692307692308,
+        "roc_auc": 0.9989042296734604,
+        "average_precision": 0.9992694764069143
+      }
+    },
+    "val": {
+      "supervised": {
+        "recall": 1.0,
+        "precision": 0.975,
+        "f2": 0.9948979591836734,
+        "false_alarm_rate": 0.0375,
+        "balanced_accuracy": 0.98125,
+        "roc_auc": 0.9977564102564103,
+        "average_precision": 0.9984491579000836
+      },
+      "autoencoder": {
+        "recall": 0.9914529914529915,
+        "precision": 0.7945205479452054,
+        "f2": 0.9446254071661238,
+        "false_alarm_rate": 0.375,
+        "balanced_accuracy": 0.8082264957264957,
+        "roc_auc": 0.965491452991453,
+        "average_precision": 0.9789181628624384
+      },
+      "hybrid": {
+        "recall": 1.0,
+        "precision": 0.975,
+        "f2": 0.9948979591836734,
+        "false_alarm_rate": 0.0375,
+        "balanced_accuracy": 0.98125,
+        "roc_auc": 0.9983974358974359,
+        "average_precision": 0.9989133597653527
+      }
+    }
+  }
+}

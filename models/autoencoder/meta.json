@@ -1,0 +1,56 @@
+{
+  "model": "autoencoder",
+  "architecture": "feature",
+  "config": {
+    "architecture": "feature",
+    "latent_channels": 32,
+    "hidden_channels": 192,
+    "ssim_weight": 0.5
+  },
+  "image_size": 320,
+  "preprocessing": {
+    "clahe": false,
+    "clahe_clip_limit": 2.0,
+    "clahe_tile_grid": 8
+  },
+  "tensor_mode": "rgb",
+  "score": {
+    "reduction": "max",
+    "topk_ratio": 0.01,
+    "blur_sigma": 4.0
+  },
+  "threshold": 0.691693902015686,
+  "target_recall": 0.95,
+  "recall_confidence": 0.95,
+  "ok_score_center": 0.6391854286193848,
+  "ok_score_scale": 0.18638159334659576,
+  "best_epoch": 195,
+  "trained_on": "pieces saines (OK) du train uniquement",
+  "train_images": 361,
+  "val_metrics": {
+    "threshold": 0.691693902015686,
+    "recall": 0.9914529914529915,
+    "recall_lower_95": 0.960097117871939,
+    "precision": 0.7945205479452054,
+    "specificity": 0.625,
+    "false_alarm_rate": 0.375,
+    "f1": 0.8821292775665398,
+    "f2": 0.9446254071661238,
+    "balanced_accuracy": 0.8082264957264957,
+    "mcc": 0.6911564620212923,
+    "accuracy": 0.8426395939086294,
+    "roc_auc": 0.965491452991453,
+    "average_precision": 0.9789181628624384,
+    "tp": 116,
+    "fp": 30,
+    "tn": 50,
+    "fn": 1,
+    "n": 197,
+    "prevalence": 0.5939086294416244
+  },
+  "trained_at": "2026-10-23T19:40:03+00:00",
+  "device": "cuda",
+  "torch": "2.8.0+cu128",
+  "python": "3.12.3",
+  "gpu": "NVIDIA L4"
+}

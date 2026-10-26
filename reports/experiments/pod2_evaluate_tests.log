@@ -1,0 +1,33 @@
+paquet installe 1.0.0
+=== evaluate
+Running stage 'evaluate':
+> python -m defectvision.evaluation.evaluate
+  supervised   | rappel=0.957 [0.915-0.991] precision=0.991 F2=0.964 AUC=0.9982
+  autoencoder  | rappel=0.957 [0.915-0.991] precision=0.789 F2=0.918 AUC=0.9417
+  hybrid       | rappel=0.974 [0.940-1.000] precision=0.991 F2=0.978 AUC=0.9989
+[OK] version dv-fa184132dba5 ; promotion possible : True
+Updating lock file 'dvc.lock'
+Use `dvc push` to send your updates to remote storage.
+1 file pushed
+=== tests
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_dag.py:13: could not import 'airflow.sdk': No module named 'airflow.sdk'
+52 passed, 1 skipped, 1 warning in 68.91s (0:01:08)
+All checks passed!
+=== nginx -t
+nginx: the configuration file /tmp/ngx/nginx.conf syntax is ok
+nginx: configuration file /tmp/ngx/nginx.conf test is successful
+=== promtool
+Checking _check.yml
+  SUCCESS: 1 rule files found
+ SUCCESS: _check.yml is valid prometheus config file syntax
+
+Checking alerts.yml
+  SUCCESS: 8 rules found
+
+Checking alerts.yml
+  SUCCESS: 8 rules found
+
+=== tableau Grafana
+panneaux 17 uid defectvision

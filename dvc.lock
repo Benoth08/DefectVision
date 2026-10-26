@@ -1,0 +1,427 @@
+schema: '2.0'
+stages:
+  acquire:
+    cmd: python -m defectvision.data.acquire
+    deps:
+    - path: src/defectvision/data/acquire.py
+      hash: md5
+      md5: 8784340d42e5e88aae0f3669e2dbfdd2
+      size: 3643
+    params:
+      params.yaml:
+        data.archive_sha256: 
+          a11236976a65d77edd41fa3f8a2803a583157bd7401efc5e7ef5532cf3a00437
+        data.download_url: 
+          https://www.kaggle.com/api/v1/datasets/download/ravirajsinh45/real-life-industrial-dataset-of-casting-product
+    outs:
+    - path: data/raw/casting
+      hash: md5
+      md5: 74ee61c122269b4e4ad64fcf98b27770.dir
+      size: 104708903
+      nfiles: 8648
+    - path: reports/acquire.json
+      hash: md5
+      md5: 8b32508791703e1ce378a5948553eb77
+      size: 636
+  index:
+    cmd: python -m defectvision.data.build_index
+    deps:
+    - path: data/raw/casting
+      hash: md5
+      md5: 74ee61c122269b4e4ad64fcf98b27770.dir
+      size: 104708903
+      nfiles: 8648
+    - path: src/defectvision/data/build_index.py
+      hash: md5
+      md5: 1e3003ee27775130649f1384e09e1c01
+      size: 10866
+    - path: src/defectvision/data/hashing.py
+      hash: md5
+      md5: 5742c30742c2ca063b98dcf3e0f147cc
+      size: 4534
+    params:
+      params.yaml:
+        data.hash_size: 16
+        data.near_duplicate_max_hamming: 12
+        data.verified_link_max_hamming: 20
+        data.verified_link_min_detail_correlation: 0.5
+    outs:
+    - path: data/interim/index.csv
+      hash: md5
+      md5: 59fdbfabd22251aa43697a6331508925
+      size: 1567087
+    - path: reports/data_audit.json
+      hash: md5
+      md5: d962040490d01beea0c20b4f8d4a2eb2
+      size: 1982
+  split:
+    cmd: python -m defectvision.data.split
+    deps:
+    - path: data/interim/index.csv
+      hash: md5
+      md5: 59fdbfabd22251aa43697a6331508925
+      size: 1567087
+    - path: src/defectvision/data/split.py
+      hash: md5
+      md5: 237f30f810c341405e2e878cc128356e
+      size: 6469
+    params:
+      params.yaml:
+        split:
+          val_ratio: 0.15
+          blind_test_ratio: 0.15
+          salt: defectvision-v1
+    outs:
+    - path: data/splits/blind_test.csv
+      hash: md5
+      md5: 8e096848c5041f484a1675ca183d566f
+      size: 31434
+    - path: data/splits/train.csv
+      hash: md5
+      md5: ea1d2942befd07ee5971d694a08e1991
+      size: 154486
+    - path: data/splits/val.csv
+      hash: md5
+      md5: d802d15d066f49d6d59f16bd5999891e
+      size: 31743
+    - path: reports/split_report.json
+      hash: md5
+      md5: f1a8150ec226c9e7b1de0b98e874246b
+      size: 1232
+  train_supervised:
+    cmd: python -m defectvision.training.train_supervised
+    deps:
+    - path: data/raw/casting
+      hash: md5
+      md5: 74ee61c122269b4e4ad64fcf98b27770.dir
+      size: 104708903
+      nfiles: 8648
+    - path: data/splits/train.csv
+      hash: md5
+      md5: ea1d2942befd07ee5971d694a08e1991
+      size: 154486
+    - path: data/splits/val.csv
+      hash: md5
+      md5: d802d15d066f49d6d59f16bd5999891e
+      size: 31743
+    - path: src/defectvision/data/augment.py
+      hash: md5
+      md5: 5e9bb42d974cdac0c80bb354894e1719
+      size: 2181
+    - path: src/defectvision/data/datasets.py
+      hash: md5
+      md5: 337b0d396e0d099b75af004e6a057861
+      size: 2777
+    - path: src/defectvision/data/preprocessing.py
+      hash: md5
+      md5: 1e56250b07a756cc213c7fcb21af9484
+      size: 2687
+    - path: src/defectvision/data/tensors.py
+      hash: md5
+      md5: b2fb7b603ef2176fa5f9f6ea6e9dade2
+      size: 1008
+    - path: src/defectvision/evaluation/metrics.py
+      hash: md5
+      md5: 5fe67b2a59caf9dc80aa91c3b0ebcc31
+      size: 5752
+    - path: src/defectvision/models/classifier.py
+      hash: md5
+      md5: 92b5c960b0a9862500c00091eccbd9b6
+      size: 1918
+    - path: src/defectvision/training/common.py
+      hash: md5
+      md5: 3ac068fd4348b01e2e1fcf54f7b915ac
+      size: 1990
+    - path: src/defectvision/training/train_supervised.py
+      hash: md5
+      md5: 7261e7675229e9b22f2212417d019418
+      size: 8427
+    params:
+      params.yaml:
+        augmentation:
+          hflip_p: 0.5
+          vflip_p: 0.5
+          rotate_limit: 15
+          rotate_p: 0.5
+          brightness_contrast_limit: 0.2
+          brightness_contrast_p: 0.5
+          noise_std: 0.03
+          noise_p: 0.3
+          blur_p: 0.2
+        evaluation.recall_confidence: 0.95
+        evaluation.target_recall: 0.95
+        preprocessing:
+          clahe: true
+          clahe_clip_limit: 2.0
+          clahe_tile_grid: 8
+        runtime.device: auto
+        seed: 42
+        supervised:
+          image_size: 224
+          pretrained: true
+          batch_size: 32
+          epochs_phase1: 5
+          epochs_phase2: 10
+          lr_phase1: 0.001
+          lr_phase2: 1e-05
+          unfreeze_layers: 2
+          balancing: sampler
+          patience: 6
+    outs:
+    - path: models/supervised
+      hash: md5
+      md5: 7c557c3b1b71c47589741d7d881a030e.dir
+      size: 45304323
+      nfiles: 2
+    - path: reports/metrics/supervised_val.json
+      hash: md5
+      md5: 870eadbae9b2f4b873b85e2b6f7738f8
+      size: 567
+    - path: reports/plots/supervised_history.csv
+      hash: md5
+      md5: a878b3622fbea2af5fa73b89a9ac3a1a
+      size: 1477
+  train_autoencoder:
+    cmd: python -m defectvision.training.train_autoencoder
+    deps:
+    - path: data/raw/casting
+      hash: md5
+      md5: 74ee61c122269b4e4ad64fcf98b27770.dir
+      size: 104708903
+      nfiles: 8648
+    - path: data/splits/train.csv
+      hash: md5
+      md5: ea1d2942befd07ee5971d694a08e1991
+      size: 154486
+    - path: data/splits/val.csv
+      hash: md5
+      md5: d802d15d066f49d6d59f16bd5999891e
+      size: 31743
+    - path: src/defectvision/data/augment.py
+      hash: md5
+      md5: 5e9bb42d974cdac0c80bb354894e1719
+      size: 2181
+    - path: src/defectvision/data/datasets.py
+      hash: md5
+      md5: 337b0d396e0d099b75af004e6a057861
+      size: 2777
+    - path: src/defectvision/data/preprocessing.py
+      hash: md5
+      md5: 1e56250b07a756cc213c7fcb21af9484
+      size: 2687
+    - path: src/defectvision/data/tensors.py
+      hash: md5
+      md5: b2fb7b603ef2176fa5f9f6ea6e9dade2
+      size: 1008
+    - path: src/defectvision/evaluation/metrics.py
+      hash: md5
+      md5: 5fe67b2a59caf9dc80aa91c3b0ebcc31
+      size: 5752
+    - path: src/defectvision/inference/scoring.py
+      hash: md5
+      md5: fc9d97ac7e8482262bfb460290798c29
+      size: 1726
+    - path: src/defectvision/models/autoencoder.py
+      hash: md5
+      md5: 154acab2ada46686067f41173b2ea36f
+      size: 9146
+    - path: src/defectvision/training/common.py
+      hash: md5
+      md5: 3ac068fd4348b01e2e1fcf54f7b915ac
+      size: 1990
+    - path: src/defectvision/training/train_autoencoder.py
+      hash: md5
+      md5: 69c530d4645668f0534544fcec943430
+      size: 7810
+    params:
+      params.yaml:
+        augmentation:
+          hflip_p: 0.5
+          vflip_p: 0.5
+          rotate_limit: 15
+          rotate_p: 0.5
+          brightness_contrast_limit: 0.2
+          brightness_contrast_p: 0.5
+          noise_std: 0.03
+          noise_p: 0.3
+          blur_p: 0.2
+        autoencoder:
+          architecture: feature
+          pretrained: true
+          image_size: 320
+          preprocessing:
+            clahe: false
+          batch_size: 16
+          epochs: 200
+          lr: 0.001
+          weight_decay: 1e-05
+          augment: geometric
+          latent_channels: 32
+          hidden_channels: 192
+          ssim_weight: 0.5
+          score_reduction: max
+          score_topk_ratio: 0.01
+          score_blur_sigma: 4.0
+          patience: 25
+        evaluation.recall_confidence: 0.95
+        evaluation.target_recall: 0.95
+        preprocessing:
+          clahe: true
+          clahe_clip_limit: 2.0
+          clahe_tile_grid: 8
+        runtime.device: auto
+        seed: 42
+    outs:
+    - path: models/autoencoder
+      hash: md5
+      md5: 24409c042547fe9169e2075f7d585654.dir
+      size: 11828025
+      nfiles: 2
+    - path: reports/metrics/autoencoder_val.json
+      hash: md5
+      md5: 7ca9a7a090bb049c62662f2bee26ff90
+      size: 604
+    - path: reports/plots/autoencoder_history.csv
+      hash: md5
+      md5: 6ce1ac4dd1489537079c340bebdb66fd
+      size: 7062
+  fit_hybrid:
+    cmd: python -m defectvision.training.fit_hybrid
+    deps:
+    - path: data/splits/val.csv
+      hash: md5
+      md5: d802d15d066f49d6d59f16bd5999891e
+      size: 31743
+    - path: models/autoencoder
+      hash: md5
+      md5: 24409c042547fe9169e2075f7d585654.dir
+      size: 11828025
+      nfiles: 2
+    - path: models/supervised
+      hash: md5
+      md5: 7c557c3b1b71c47589741d7d881a030e.dir
+      size: 45304323
+      nfiles: 2
+    - path: src/defectvision/inference/scoring.py
+      hash: md5
+      md5: fc9d97ac7e8482262bfb460290798c29
+      size: 1726
+    - path: src/defectvision/models/hybrid.py
+      hash: md5
+      md5: 4da18adcb926297f84075024773e4a96
+      size: 4123
+    - path: src/defectvision/training/fit_hybrid.py
+      hash: md5
+      md5: 846c7c850d8df3d4e73046f13982ee2c
+      size: 6000
+    params:
+      params.yaml:
+        evaluation.recall_confidence: 0.95
+        evaluation.target_recall: 0.95
+        hybrid:
+          strategy: stacking
+          C: 1.0
+          cv_folds: 5
+          review_margin: 0.1
+          novelty_quantile: 0.99
+        seed: 42
+    outs:
+    - path: models/hybrid
+      hash: md5
+      md5: 0325f901208e201af59f58fbdd81d84c.dir
+      size: 461
+      nfiles: 1
+    - path: reports/metrics/hybrid_val.json
+      hash: md5
+      md5: 24eae2e2eae17b70f4eaf95d413f1f16
+      size: 1355
+  evaluate:
+    cmd: python -m defectvision.evaluation.evaluate
+    deps:
+    - path: data/splits/blind_test.csv
+      hash: md5
+      md5: 8e096848c5041f484a1675ca183d566f
+      size: 31434
+    - path: data/splits/train.csv
+      hash: md5
+      md5: ea1d2942befd07ee5971d694a08e1991
+      size: 154486
+    - path: models/autoencoder
+      hash: md5
+      md5: 24409c042547fe9169e2075f7d585654.dir
+      size: 11828025
+      nfiles: 2
+    - path: models/hybrid
+      hash: md5
+      md5: 0325f901208e201af59f58fbdd81d84c.dir
+      size: 461
+      nfiles: 1
+    - path: models/supervised
+      hash: md5
+      md5: 7c557c3b1b71c47589741d7d881a030e.dir
+      size: 45304323
+      nfiles: 2
+    - path: reports/metrics/hybrid_val.json
+      hash: md5
+      md5: 24eae2e2eae17b70f4eaf95d413f1f16
+      size: 1355
+    - path: reports/plots/autoencoder_history.csv
+      hash: md5
+      md5: 6ce1ac4dd1489537079c340bebdb66fd
+      size: 7062
+    - path: reports/plots/supervised_history.csv
+      hash: md5
+      md5: a878b3622fbea2af5fa73b89a9ac3a1a
+      size: 1477
+    - path: reports/split_report.json
+      hash: md5
+      md5: f1a8150ec226c9e7b1de0b98e874246b
+      size: 1232
+    - path: src/defectvision/evaluation
+      hash: md5
+      md5: 88787493731ff531b032e8be51f474b2.dir
+      size: 37496
+      nfiles: 4
+    - path: src/defectvision/explain
+      hash: md5
+      md5: 7931c159ad06dded70909d0f0bff0426.dir
+      size: 2276
+      nfiles: 2
+    - path: src/defectvision/inference
+      hash: md5
+      md5: 96b7f5c854c5db93a148c7eae351df58.dir
+      size: 10785
+      nfiles: 4
+    params:
+      params.yaml:
+        evaluation:
+          target_recall: 0.95
+          recall_confidence: 0.95
+          bootstrap_samples: 2000
+          ci_level: 0.95
+        gates:
+          min_recall: 0.95
+          min_precision: 0.8
+        preprocessing:
+          clahe: true
+          clahe_clip_limit: 2.0
+          clahe_tile_grid: 8
+        seed: 42
+    outs:
+    - path: models/manifest.json
+      hash: md5
+      md5: 7babd0f6d7bfecffc0e63f8fb7da9681
+      size: 2486
+    - path: reports/figures
+      hash: md5
+      md5: 961324a1dd0a9e484670aba285fad6d8.dir
+      size: 4133158
+      nfiles: 11
+    - path: reports/metrics/blind_test.json
+      hash: md5
+      md5: f64fd094f8486bda546563730ad46ef3
+      size: 5727
+    - path: reports/predictions/blind_test.csv
+      hash: md5
+      md5: cf27d4cd44890ab485fbe0baa8424ca7
+      size: 24376

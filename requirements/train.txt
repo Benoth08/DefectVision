@@ -1,0 +1,8 @@
+# Entrainement, evaluation, pipeline DVC et registre MLflow.
+-r core.txt
+pandas==2.3.3
+scipy==1.18.1
+scikit-learn==1.9.1
+matplotlib==3.11.2
+dvc==3.67.1
+mlflow==3.17.2

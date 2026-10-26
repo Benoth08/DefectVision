@@ -1,0 +1,15 @@
+{
+  "url": "https://www.kaggle.com/api/v1/datasets/download/ravirajsinh45/real-life-industrial-dataset-of-casting-product",
+  "archive_sha256": "a11236976a65d77edd41fa3f8a2803a583157bd7401efc5e7ef5532cf3a00437",
+  "archive_bytes": 104965698,
+  "members": 8648,
+  "images_per_folder": {
+    "casting_512x512/casting_512x512/def_front": 781,
+    "casting_512x512/casting_512x512/ok_front": 519,
+    "casting_data/casting_data/test/def_front": 453,
+    "casting_data/casting_data/test/ok_front": 262,
+    "casting_data/casting_data/train/def_front": 3758,
+    "casting_data/casting_data/train/ok_front": 2875
+  },
+  "images_total": 8648
+}

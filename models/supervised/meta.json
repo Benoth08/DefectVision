@@ -1,0 +1,42 @@
+{
+  "model": "supervised",
+  "architecture": "resnet18",
+  "image_size": 224,
+  "preprocessing": {
+    "clahe": true,
+    "clahe_clip_limit": 2.0,
+    "clahe_tile_grid": 8
+  },
+  "tensor_mode": "rgb",
+  "threshold": 0.4081338047981262,
+  "target_recall": 0.95,
+  "recall_confidence": 0.95,
+  "best_epoch": 11,
+  "balancing": "sampler",
+  "val_metrics": {
+    "threshold": 0.4081338047981262,
+    "recall": 1.0,
+    "recall_lower_95": 0.9747204672504487,
+    "precision": 0.975,
+    "specificity": 0.9625,
+    "false_alarm_rate": 0.0375,
+    "f1": 0.9873417721518987,
+    "f2": 0.9948979591836734,
+    "balanced_accuracy": 0.98125,
+    "mcc": 0.968729838499878,
+    "accuracy": 0.9847715736040609,
+    "roc_auc": 0.9977564102564103,
+    "average_precision": 0.9984491579000836,
+    "tp": 117,
+    "fp": 3,
+    "tn": 77,
+    "fn": 0,
+    "n": 197,
+    "prevalence": 0.5939086294416244
+  },
+  "trained_at": "2026-10-23T19:36:39+00:00",
+  "device": "cuda",
+  "torch": "2.8.0+cu128",
+  "python": "3.12.3",
+  "gpu": "NVIDIA L4"
+}

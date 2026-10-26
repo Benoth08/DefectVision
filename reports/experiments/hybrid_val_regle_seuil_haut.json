@@ -1,0 +1,46 @@
+{
+  "deployed_strategy": "stacking",
+  "val": {
+    "stacking": {
+      "threshold": 0.8079776523984953,
+      "recall": 0.9572649572649573,
+      "precision": 1.0,
+      "specificity": 1.0,
+      "false_alarm_rate": 0.0,
+      "f1": 0.9781659388646288,
+      "f2": 0.9655172413793103,
+      "balanced_accuracy": 0.9786324786324787,
+      "mcc": 0.9491866275377201,
+      "accuracy": 0.9746192893401016,
+      "roc_auc": 0.9983974358974359,
+      "average_precision": 0.9989133597653527,
+      "tp": 112,
+      "fp": 0,
+      "tn": 80,
+      "fn": 5,
+      "n": 197,
+      "prevalence": 0.5939086294416244
+    },
+    "or": {
+      "threshold": 0.8959047994905983,
+      "recall": 0.9572649572649573,
+      "precision": 1.0,
+      "specificity": 1.0,
+      "false_alarm_rate": 0.0,
+      "f1": 0.9781659388646288,
+      "f2": 0.9655172413793103,
+      "balanced_accuracy": 0.9786324786324787,
+      "mcc": 0.9491866275377201,
+      "accuracy": 0.9746192893401016,
+      "roc_auc": 0.9909188034188035,
+      "average_precision": 0.9946398981909157,
+      "tp": 112,
+      "fp": 0,
+      "tn": 80,
+      "fn": 5,
+      "n": 197,
+      "prevalence": 0.5939086294416244
+    }
+  },
+  "note": "stacking : metriques sur predictions hors echantillon (validation croisee)"
+}

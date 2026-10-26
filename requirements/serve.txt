@@ -1,0 +1,7 @@
+# Service d'inference (FastAPI + Prometheus + client MLflow leger).
+-r core.txt
+fastapi==0.161.1
+uvicorn[standard]==0.54.0
+python-multipart==0.0.32
+prometheus-client==0.26.0
+mlflow-skinny==3.17.2

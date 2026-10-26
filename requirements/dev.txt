@@ -1,0 +1,11 @@
+# Environnement de developpement complet (tests, pipeline, service), a installer depuis la racine du depot.
+# PyTorch vient de PyPI ici ; les images Docker utilisent torch-cpu.txt.
+# Le paquet lui-meme, en mode editable : "python -m defectvision..." fonctionne sans PYTHONPATH.
+-e .
+-r train.txt
+-r serve.txt
+torch==2.8.0
+torchvision==0.23.0
+pytest==8.4.2
+httpx>=0.27,<1
+ruff==0.17.2
