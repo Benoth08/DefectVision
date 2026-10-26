@@ -1,0 +1,59 @@
+groups:
+  - name: defectvision-service
+    rules:
+      - alert: ApiIndisponible
+        expr: up{job="defectvision-api"} == 0
+        for: 2m
+        labels: {severity: critical}
+        annotations:
+          summary: "L'API d'inspection ne repond plus"
+
+      - alert: AucunModeleCharge
+        expr: defectvision_model_loaded == 0
+        for: 5m
+        labels: {severity: critical}
+        annotations:
+          summary: "L'API tourne sans jeu de modeles (predictions refusees)"
+
+      - alert: LatenceElevee
+        expr: histogram_quantile(0.95, sum by (le) (rate(defectvision_http_request_duration_seconds_bucket{route="/predict"}[5m]))) > 1
+        for: 10m
+        labels: {severity: warning}
+        annotations:
+          summary: "Latence p95 de /predict superieure a 1 s"
+
+      - alert: TauxErreursEleve
+        expr: sum(rate(defectvision_http_requests_total{status=~"5.."}[5m])) / clamp_min(sum(rate(defectvision_http_requests_total[5m])), 1e-9) > 0.05
+        for: 10m
+        labels: {severity: warning}
+        annotations:
+          summary: "Plus de 5 % de reponses en erreur serveur"
+
+  - name: defectvision-modele
+    rules:
+      # Taux de defauts annonces par le modele hybride sur 1 h, compare a sa
+      # moyenne sur 7 jours : un ecart fort signale une derive (production,
+      # eclairage, camera) ou un probleme de modele.
+      - record: defectvision:defect_rate:1h
+        expr: sum(rate(defectvision_predictions_total{model="hybrid",label="DEFAUT"}[1h])) / clamp_min(sum(rate(defectvision_predictions_total{model="hybrid"}[1h])), 1e-9)
+
+      - alert: DeriveTauxDefauts
+        expr: abs(defectvision:defect_rate:1h - avg_over_time(defectvision:defect_rate:1h[7d])) > 0.2
+        for: 30m
+        labels: {severity: warning}
+        annotations:
+          summary: "Le taux de defauts s'ecarte de plus de 20 points de sa moyenne sur 7 jours"
+
+      - alert: DeriveLuminositeEntrees
+        expr: abs((sum(rate(defectvision_input_mean_intensity_sum[1h])) / clamp_min(sum(rate(defectvision_input_mean_intensity_count[1h])), 1e-9)) - (sum(rate(defectvision_input_mean_intensity_sum[7d])) / clamp_min(sum(rate(defectvision_input_mean_intensity_count[7d])), 1e-9))) > 20
+        for: 30m
+        labels: {severity: warning}
+        annotations:
+          summary: "Luminosite moyenne des images en derive (eclairage ou camera)"
+
+      - alert: RevuesOperateurNombreuses
+        expr: sum(rate(defectvision_review_required_total{model="hybrid"}[1h])) / clamp_min(sum(rate(defectvision_predictions_total{model="hybrid"}[1h])), 1e-9) > 0.3
+        for: 30m
+        labels: {severity: warning}
+        annotations:
+          summary: "Plus de 30 % des pieces renvoyees a l'operateur : anomalies nouvelles ou modele a recalibrer"
