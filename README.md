@@ -25,35 +25,9 @@ Blind test de **195 pièces jamais vues** (117 défauts). Seuils fixés sur la v
 | Autoencodeur | 95,7 % | 78,9 % | 38,5 % | 0,942 | 5 |
 | **Hybride** | **97,4 %** | **99,1 %** | **1,3 %** | **0,999** | **3** |
 
-### Courbes ROC et précision-rappel
-
-![Courbes ROC et précision-rappel](reports/figures/roc_pr_curves.png)
-
-### Métriques avec intervalles de confiance (bootstrap, 2 000 tirages)
-
-![Métriques avec intervalles de confiance](reports/figures/metrics_ci.png)
-
 ### Matrices de confusion
 
 ![Matrices de confusion](reports/figures/confusion_matrices.png)
-
-### Comment l'hybride combine les deux scores
-
-Chaque point est une pièce. Axe horizontal : score du supervisé. Axe vertical : score de l'autoencodeur.
-
-![Espace des deux scores](reports/figures/score_space.png)
-
-![Distribution des scores](reports/figures/score_distributions.png)
-
-### Explicabilité
-
-**Grad-CAM** (supervisé) : zones qui ont pesé dans la décision.
-
-![Grad-CAM](reports/figures/gradcam_examples.png)
-
-**Carte d'anomalie** (autoencodeur) : zones qui s'écartent d'une pièce saine.
-
-![Cartes d'anomalie](reports/figures/autoencoder_maps.png)
 
 ### Entraînement
 
@@ -70,24 +44,6 @@ Découpage par groupes de photos d'une même pièce, sans fuite entre train, val
 ---
 
 ## MLOps
-
-```mermaid
-flowchart LR
-    AF[Airflow<br/>DAG hebdomadaire] -->|dvc repro| P
-    subgraph P[Pipeline DVC]
-        A[acquire] --> I[index] --> S[split]
-        S --> TS[train_supervised]
-        S --> TA[train_autoencoder]
-        TS --> H[fit_hybrid]
-        TA --> H
-        H --> E[evaluate]
-    end
-    E -->|quality gate| R[MLflow<br/>alias champion]
-    R --> API[FastAPI]
-    NG[nginx] --> API
-    PR[Prometheus] -->|/metrics| API
-    PR --> GF[Grafana]
-```
 
 | Outil | Rôle |
 |---|---|
