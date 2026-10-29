@@ -29,13 +29,19 @@ Blind test de **195 pièces jamais vues** (117 défauts). Seuils fixés sur la v
 
 ![Matrices de confusion](reports/figures/confusion_matrices.png)
 
+### Grad-CAM (supervisé)
+
+![Grad-CAM](reports/figures/gradcam_examples.png)
+
+### Cartes d'anomalie (autoencodeur)
+
+![Cartes d'anomalie](reports/figures/autoencoder_maps.png)
+
 ### Entraînement
 
 ![Courbes d'entraînement](reports/figures/training_curves.png)
 
 ### Données
-
-Découpage par groupes de photos d'une même pièce, sans fuite entre train, validation et blind test.
 
 ![Répartition des images](reports/figures/split_distribution.png)
 
