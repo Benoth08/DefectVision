@@ -19,11 +19,11 @@ Trois modèles pour dire si une pièce est **saine** ou **défectueuse** :
 
 Blind test de **195 pièces jamais vues** (117 défauts). Seuils fixés sur la validation.
 
-| Modèle | Rappel | Précision | Fausses alarmes | AUC ROC | Défauts manqués |
-|---|---|---|---|---|---|
-| Supervisé — ResNet-18 | 95,7 % | 99,1 % | 1,3 % | 0,998 | 5 |
-| Autoencodeur | 95,7 % | 78,9 % | 38,5 % | 0,942 | 5 |
-| **Hybride** | **97,4 %** | **99,1 %** | **1,3 %** | **0,999** | **3** |
+| Modèle | Rappel | Précision | AUC ROC | Défauts manqués |
+|---|---|---|---|---|
+| Supervisé — ResNet-18 | 95,7 % | 99,1 % | 0,998 | 5 |
+| Autoencodeur | 95,7 % | 78,9 % | 0,942 | 5 |
+| **Hybride** | **97,4 %** | **99,1 %** | **0,999** | **3** |
 
 ### Matrices de confusion
 
